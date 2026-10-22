@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive, max-snippet:0, max-image-preview:none">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Tonton video ini.">
+  <meta property="og:type" content="video.other">
+  <meta property="og:title" content="Watch Video">
+  <meta property="og:description" content="Tonton video ini.">
+  <meta property="og:url" content="">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Watch Video">
+  <meta name="twitter:description" content="Tonton video ini.">
+  <title>Watch Video</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --text: #f1f1f1;
+      --muted: #aaa;
+      --accent: #3ea6ff;
+      --border: #333;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.4;
+    }
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px 12px 48px;
+    }
+    .player-card {
+      background: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .player-wrap {
+      position: relative;
+      width: 100%;
+      background: #000;
+      aspect-ratio: 9 / 16;
+      max-height: 75vh;
+      margin: 0 auto;
+    }
+    @media (min-width: 700px) {
+      .player-wrap { aspect-ratio: 16 / 9; max-height: 70vh; }
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: #000;
+    }
+    .meta {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .meta a { color: var(--accent); text-decoration: none; }
+    .meta a:hover { text-decoration: underline; }
+    .layout {
+      display: grid;
+      gap: 16px;
+    }
+    .main { min-width: 0; }
+    h1 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 8px 0 4px;
+      padding: 0 2px;
+    }
+    .id-label {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 0 2px 8px;
+    }
+    .ad-banner-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 12px 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .ad-banner-inner {
+      width: 300px;
+      max-width: 100%;
+      min-height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .ad-banner-inner iframe {
+      max-width: 100%;
+      border: 0;
+      display: block;
+    }
+    .ad-overlay {
+      position: absolute;
+      left: 0; right: 0;
+      bottom: 0;
+      z-index: 6;
+      padding: 0 10px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.45) 55%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .4s ease, transform .4s ease;
+      pointer-events: none;
+    }
+    .ad-overlay.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .ad-overlay .ad-hint {
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+      text-align: center;
+      text-shadow: 0 1px 3px rgba(0,0,0,.6);
+      line-height: 1.35;
+      max-width: 92%;
+    }
+    .ad-overlay .ad-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #fff;
+      color: #111;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 11px 22px;
+      border-radius: 8px;
+      border: none;
+      box-shadow: 0 2px 12px rgba(0,0,0,.35);
+      max-width: 92%;
+      text-align: center;
+      transition: background .15s ease, transform .15s ease;
+    }
+    .ad-overlay .ad-btn:hover {
+      background: #f0f0f0;
+      transform: translateY(-1px);
+    }
+    .ad-overlay .ad-btn:active {
+      transform: translateY(0);
+      background: #e8e8e8;
+    }
+    .ad-overlay .ad-btn .arrow {
+      opacity: .55;
+      font-size: 13px;
+    }
+    .ad-overlay .ad-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: .7;
+    }
+    .ad-overlay .ad-close:hover { opacity: 1; background: rgba(0,0,0,.65); }
+    .ad-sticky {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 30;
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: rgba(18,18,18,.96);
+      border-top: 1px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: opacity .35s ease, transform .35s ease;
+      pointer-events: none;
+    }
+    .ad-sticky.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .ad-sticky .ad-sticky-text {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .ad-sticky .ad-sticky-text strong {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 1px;
+    }
+    .ad-sticky .ad-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff;
+      color: #111;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .ad-sticky .ad-btn:hover { background: #f0f0f0; }
+    .ad-sticky .ad-close-sticky {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: #888;
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .ad-sticky .ad-close-sticky:hover { color: #fff; }
+    @media (min-width: 700px) {
+      .ad-overlay { padding: 0 16px 18px; }
+      .ad-overlay .ad-btn { font-size: 15px; padding: 12px 28px; }
+      .ad-sticky .ad-sticky-text { max-width: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="layout">
+      <div class="main">
+        <h1 id="pageTitle">Watch Video</h1>
+        <p class="id-label" id="idLabel">ID: -</p>
+        <div class="player-card">
+          <div class="player-wrap">
+            <video
+              id="player"
+              controls
+              playsinline
+              preload="metadata"
+              controlslist="nodownload"
+            ></video>
+            
+            <div class="ad-overlay" id="adOverlay" aria-hidden="true">
+              <button type="button" class="ad-close" id="adCloseOverlay" title="Tutup" aria-label="Tutup">×</button>
+              <p class="ad-hint">Bagian ini belum ditampilkan sepenuhnya</p>
+              <a class="ad-btn" id="adBtnOverlay" href="#" target="_blank" rel="noopener noreferrer nofollow">
+                Ada kelanjutannya di sini <span class="arrow">→</span>
+              </a>
+            </div>
+          </div>
+          <div class="meta">
+            <span>Powered by Grok Video Pipeline</span>
+            <a id="downloadLink" href="#" download>Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="ad-sticky" id="adSticky" aria-hidden="true">
+    <div class="ad-sticky-text">
+      <strong>Ada kelanjutannya di sini</strong>
+      Bagian ini belum ditampilkan sepenuhnya
+    </div>
+    <a class="ad-btn" id="adBtnSticky" href="#" target="_blank" rel="noopener noreferrer nofollow">Buka →</a>
+    <button type="button" class="ad-close-sticky" id="adCloseSticky" title="Tutup" aria-label="Tutup">×</button>
+  </div>
+
+  <script>
+    (function () {
+      // Ambil ID dari query string ?v=xxxx
+      function getVideoId() {
+        const params = new URLSearchParams(window.location.search);
+        let id = params.get('v') || params.get('id') || '';
+        // Fallback: ambil dari path terakhir (contoh: /watch/xxxx atau /xxxx)
+        if (!id) {
+          const path = window.location.pathname.replace(/\/+$/, '');
+          const parts = path.split('/');
+          const last = parts[parts.length - 1];
+          if (last && last !== 'index.html' && last !== '') {
+            id = last;
+          }
+        }
+        return id.trim();
+      }
+
+      const videoId = getVideoId();
+      const player = document.getElementById('player');
+      const idLabel = document.getElementById('idLabel');
+      const pageTitle = document.getElementById('pageTitle');
+      const downloadLink = document.getElementById('downloadLink');
+      const adBtnOverlay = document.getElementById('adBtnOverlay');
+      const adBtnSticky = document.getElementById('adBtnSticky');
+
+      if (videoId) {
+        const videoUrl = 'https://cdn.slicedrive.com/' + encodeURIComponent(videoId) + '.mp4';
+        player.src = videoUrl;
+        idLabel.textContent = 'ID: ' + videoId;
+        pageTitle.textContent = 'Watch Video - ' + videoId;
+        document.title = 'Watch Video - ' + videoId;
+        downloadLink.href = videoUrl;
+
+        // Update meta tags
+        const ogUrl = document.querySelector('meta[property="og:url"]');
+        if (ogUrl) ogUrl.setAttribute('content', window.location.href);
+
+        // Link overlay (bisa diganti sesuai kebutuhan)
+        const goUrl = 'https://xai.playling.sbs/go?v=' + encodeURIComponent(videoId) + '&src=direct';
+        adBtnOverlay.href = goUrl;
+        adBtnSticky.href = goUrl;
+      } else {
+        idLabel.textContent = 'ID: tidak ditemukan (gunakan ?v=ID)';
+        pageTitle.textContent = 'Video tidak ditemukan';
+      }
+
+      // Overlay & sticky ad logic (tampil setelah beberapa detik)
+      const overlay = document.getElementById('adOverlay');
+      const sticky = document.getElementById('adSticky');
+      const closeOverlay = document.getElementById('adCloseOverlay');
+      const closeSticky = document.getElementById('adCloseSticky');
+
+      function showAds() {
+        if (overlay) {
+          overlay.classList.add('show');
+          overlay.setAttribute('aria-hidden', 'false');
+        }
+        if (sticky) {
+          sticky.classList.add('show');
+          sticky.setAttribute('aria-hidden', 'false');
+        }
+      }
+
+      function hideOverlay() {
+        if (overlay) {
+          overlay.classList.remove('show');
+          overlay.setAttribute('aria-hidden', 'true');
+        }
+      }
+
+      function hideSticky() {
+        if (sticky) {
+          sticky.classList.remove('show');
+          sticky.setAttribute('aria-hidden', 'true');
+        }
+      }
+
+      if (closeOverlay) closeOverlay.addEventListener('click', hideOverlay);
+      if (closeSticky) closeSticky.addEventListener('click', hideSticky);
+
+      // Tampilkan setelah 8 detik (lebih natural)
+      setTimeout(showAds, 8000);
+    })();
+  </script>
+  <!-- Popunder script - diletakkan paling bawah agar tidak mengganggu loading video & mengurangi risiko flag -->
+  <script src="https://commandsister.com/42/4e/96/424e968fa6035ade5ff1d9b05a8c1e75.js"></script>
+  
+   <!-- Histats.com  START  (aync)-->
+<script type="text/javascript">var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '1,5009868,4,0,0,0,00010000']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('//s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();</script>
+<noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?5009868&101" alt="" border="0"></a></noscript>
+<!-- Histats.com  END  -->
+</body>
+</html>
